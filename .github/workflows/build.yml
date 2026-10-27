@@ -1,0 +1,44 @@
+name: Compilar APK Granja Millonaria
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-android-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configurar Flutter para Flet
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Configurar Java (JDK 17 para Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Instalar Flet y dependencias
+        run: |
+          pip install --upgrade pip
+          pip install flet pandas numpy requests beautifulsoup4 plyer
+
+      - name: Compilar APK Híbrido
+        run: |
+          flet build apk --project "GranjaMillonariaPro" --include-packages flet_audio
+
+      - name: Subir el APK listo para descargar
+        uses: actions/upload-artifact@v4
+        with:
+          name: GranjaMillonaria-Android-APK
+          path: build/apk/*.apk
