@@ -1,0 +1,6 @@
+flet
+pandas
+numpy
+requests
+beautifulsoup4
+plyer
